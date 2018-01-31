@@ -11,18 +11,19 @@ import adafruit_tlc5947
 # Define pins connected to the TLC5947
 SCK = board.SCK
 MOSI = board.MOSI
-LATCH = board.D5
+LATCH = digitalio.DigitalInOut(board.D5)
 
 # Initialize SPI bus.
-spi = busio.SPI(SCK=SCK, MOSI=MOSI)
+spi = busio.SPI(clock=SCK, MOSI=MOSI)
 
 # Initialize TLC5947
-tlc5947 = adafruit_tlc5947.TLC5947(spi, digitalio.DigitalInOut(LATCH))
+tlc5947 = adafruit_tlc5947.TLC5947(spi, LATCH)
 # You can optionally disable auto_write which allows you to control when
 # channel state is written to the chip.  Normally auto_write is true and
 # will automatically write out changes as soon as they happen to a channel, but
 # if you need more control or atomic updates of multiple channels then disable
 # and manually call write as shown below.
+#tlc5947 = adafruit_tlc5947.TLC5947(spi, LATCH, auto_write=False)
 
 # There are two ways to channel channel PWM values.  The first is by getting
 # a PWMOut object that acts like the built-in PWMOut and can be used anywhere
