@@ -54,16 +54,18 @@ __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_TLC5947.git"
 class TLC5947:
     """TLC5947 12-bit 24 channel LED PWM driver.  Create an instance of this by
     passing in at least the following parameters:
-    - spi: The SPI bus connected to the chip (only the SCK and MOSI lines are
-           used, there is no MISO/input).
-    - latch: A DigitalInOut instance connected to the chip's latch line.
+
+    :param spi: The SPI bus connected to the chip (only the SCK and MOSI lines are
+                used, there is no MISO/input).
+    :param latch: A DigitalInOut instance connected to the chip's latch line.
 
     Optionally you can specify:
-    - auto_write: This is a boolean that defaults to True and will automatically
-                  write out all the channel values to the chip as soon as a
-                  single one is updated.  If you set to false to disable then
-                  you MUST call write after every channel update or when you
-                  deem necessary to update the chip state.
+    
+    :param auto_write: This is a boolean that defaults to True and will automatically
+                       write out all the channel values to the chip as soon as a
+                       single one is updated.  If you set to false to disable then
+                       you MUST call write after every channel update or when you
+                       deem necessary to update the chip state.
     """
 
     class PWMOut:
