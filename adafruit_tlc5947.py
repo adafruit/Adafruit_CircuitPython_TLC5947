@@ -20,7 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 """
-`Adafruit_TLC5947`
+`adafruit_tlc5947`
 ====================================================
 
 CircuitPython module for the TLC5947 12-bit 24 channel LED PWM driver.  See
@@ -60,7 +60,7 @@ class TLC5947:
     :param latch: A DigitalInOut instance connected to the chip's latch line.
 
     Optionally you can specify:
-    
+
     :param auto_write: This is a boolean that defaults to True and will automatically
                        write out all the channel values to the chip as soon as a
                        single one is updated.  If you set to false to disable then
