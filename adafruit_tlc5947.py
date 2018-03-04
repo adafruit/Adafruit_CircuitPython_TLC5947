@@ -27,6 +27,19 @@ CircuitPython module for the TLC5947 12-bit 24 channel LED PWM driver.  See
 examples/simpletest.py for a demo of the usage.
 
 * Author(s): Tony DiCola
+
+Implementation Notes
+--------------------
+
+**Hardware:**
+
+* Adafruit `24-Channel 12-bit PWM LED Driver - SPI Interface - TLC5947
+  <https://www.adafruit.com/product/1429>`_ (Product ID: 1429)
+
+**Software and Dependencies:**
+
+* Adafruit CircuitPython firmware for the ESP8622 and M0-based boards:
+  https://github.com/adafruit/circuitpython/releases
 """
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_TLC5947.git"
