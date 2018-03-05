@@ -20,13 +20,26 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 """
-`Adafruit_TLC5947`
+`adafruit_tlc5947`
 ====================================================
 
 CircuitPython module for the TLC5947 12-bit 24 channel LED PWM driver.  See
 examples/simpletest.py for a demo of the usage.
 
 * Author(s): Tony DiCola
+
+Implementation Notes
+--------------------
+
+**Hardware:**
+
+* Adafruit `24-Channel 12-bit PWM LED Driver - SPI Interface - TLC5947
+  <https://www.adafruit.com/product/1429>`_ (Product ID: 1429)
+
+**Software and Dependencies:**
+
+* Adafruit CircuitPython firmware for the ESP8622 and M0-based boards:
+  https://github.com/adafruit/circuitpython/releases
 """
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_TLC5947.git"
@@ -41,16 +54,18 @@ __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_TLC5947.git"
 class TLC5947:
     """TLC5947 12-bit 24 channel LED PWM driver.  Create an instance of this by
     passing in at least the following parameters:
-    - spi: The SPI bus connected to the chip (only the SCK and MOSI lines are
-           used, there is no MISO/input).
-    - latch: A DigitalInOut instance connected to the chip's latch line.
+
+    :param spi: The SPI bus connected to the chip (only the SCK and MOSI lines are
+                used, there is no MISO/input).
+    :param latch: A DigitalInOut instance connected to the chip's latch line.
 
     Optionally you can specify:
-    - auto_write: This is a boolean that defaults to True and will automatically
-                  write out all the channel values to the chip as soon as a
-                  single one is updated.  If you set to false to disable then
-                  you MUST call write after every channel update or when you
-                  deem necessary to update the chip state.
+
+    :param auto_write: This is a boolean that defaults to True and will automatically
+                       write out all the channel values to the chip as soon as a
+                       single one is updated.  If you set to false to disable then
+                       you MUST call write after every channel update or when you
+                       deem necessary to update the chip state.
     """
 
     class PWMOut:
