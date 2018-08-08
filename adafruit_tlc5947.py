@@ -150,6 +150,8 @@ class TLC5947:
             self._spi.unlock()
 
     def _get_gs_value(self, channel):
+        # pylint: disable=no-else-return
+        # Disable should be removed when refactor can be tested
         assert 0 <= channel <= 23
         # Invert channel position as the last channel needs to be written first.
         # I.e. is in the first position of the shift registr.
