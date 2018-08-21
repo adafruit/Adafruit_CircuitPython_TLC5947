@@ -42,14 +42,17 @@ step = 10
 start_pwm = 0
 end_pwm = 32767 # 50% (32767, or half of the maximum 65535):
 
-for pin in (red, green, blue):
-    # Brighten:
-    for pwm in range(start_pwm, end_pwm, step):
-        pin.duty_cycle = pwm
+while True:
+    for pin in (red, green, blue):
+        # Brighten:
+        print("Brightening LED")
+        for pwm in range(start_pwm, end_pwm, step):
+            pin.duty_cycle = pwm
 
-    # Dim:
-    for pwm in range(end_pwm, start_pwm, 0 - step):
-        pin.duty_cycle = pwm
+        # Dim:
+        print("Dimming LED")
+        for pwm in range(end_pwm, start_pwm, 0 - step):
+            pin.duty_cycle = pwm
 
 # Note if auto_write was disabled you need to call write on the parent to
 # make sure the value is written (this is not common, if disabling auto_write
