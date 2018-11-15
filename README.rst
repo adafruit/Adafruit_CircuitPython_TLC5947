@@ -30,6 +30,7 @@ Usage Example
 =============
 
 See examples/tlc5947_simpletest.py for a demo of the usage.
+See examples/tlc5947_chain.py for a demo of chained driver usage.
 
 Contributing
 ============

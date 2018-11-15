@@ -26,7 +26,7 @@
 CircuitPython module for the TLC5947 12-bit 24 channel LED PWM driver.  See
 examples/simpletest.py for a demo of the usage.
 
-* Author(s): Tony DiCola
+* Author(s): Tony DiCola, Walter Haschka
 
 Implementation Notes
 --------------------
@@ -50,6 +50,8 @@ __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_TLC5947.git"
 # access is by design for the internal class.
 #pylint: disable=protected-access
 
+_CHANNELS = 24
+_STOREBYTES = _CHANNELS + _CHANNELS/2
 
 class TLC5947:
     """TLC5947 12-bit 24 channel LED PWM driver.  Create an instance of this by
@@ -66,6 +68,16 @@ class TLC5947:
                        single one is updated.  If you set to false to disable then
                        you MUST call write after every channel update or when you
                        deem necessary to update the chip state.
+
+    :param num_drivers: This is an integer that defaults to 1. It stands for the
+                        number of chained LED driver boards (DOUT of one board has
+                        to be connected to DIN of the next). For each board added,
+                        36 bytes of RAM memory will be taken. The channel numbers
+                        on the driver directly connected to the controller are 0 to
+                        23, and for each driver add 24 to the port number printed.
+                        The more drivers are chained, the more viable it is to set
+                        auto_write=false, and call write explicitly after updating
+						all the channels.
     """
 
     class PWMOut:
@@ -115,14 +127,15 @@ class TLC5947:
         #pylint: enable=no-self-use,unused-argument
 
 
-    def __init__(self, spi, latch, *, auto_write=True):
+    def __init__(self, spi, latch, *, auto_write=True, num_drivers=1):
         self._spi = spi
         self._latch = latch
         self._latch.switch_to_output(value=False)
-        # This device is just a big 36 byte long shift register.  There's no
-        # fancy protocol or other commands to send, just write out all 288
+        # This device is just a big 36*n byte long shift register.  There's no
+        # fancy protocol or other commands to send, just write out all 288*n
         # bits every time the state is updated.
-        self._shift_reg = bytearray(36)
+        self._n = num_drivers
+        self._shift_reg = bytearray(_STOREBYTES * self._n)
         # Save auto_write state (i.e. push out shift register values on
         # any channel value change).
         self.auto_write = auto_write
@@ -141,7 +154,7 @@ class TLC5947:
             # First ensure latch is low.
             self._latch.value = False
             # Write out the bits.
-            self._spi.write(self._shift_reg, start=0, end=37)
+            self._spi.write(self._shift_reg, start=0, end=_STOREBYTES*self._n +1)
             # Then toggle latch high and low to set the value.
             self._latch.value = True
             self._latch.value = False
@@ -152,10 +165,10 @@ class TLC5947:
     def _get_gs_value(self, channel):
         # pylint: disable=no-else-return
         # Disable should be removed when refactor can be tested
-        assert 0 <= channel <= 23
+        assert 0 <= channel < _CHANNELS * self._n
         # Invert channel position as the last channel needs to be written first.
         # I.e. is in the first position of the shift registr.
-        channel = 23 - channel
+        channel = _CHANNELS * self._n - 1 - channel
         # Calculate exact bit position within the shift register.
         bit_offset = channel * 12
         # Now calculate the byte that this position falls within and any offset
@@ -177,11 +190,11 @@ class TLC5947:
             raise RuntimeError('Unsupported bit offset!')
 
     def _set_gs_value(self, channel, val):
-        assert 0 <= channel <= 23
+        assert 0 <= channel < _CHANNELS * self._n
         assert 0 <= val <= 4095
         # Invert channel position as the last channel needs to be written first.
         # I.e. is in the first position of the shift registr.
-        channel = 23 - channel
+        channel = _CHANNELS * self._n - 1 - channel
         # Calculate exact bit position within the shift register.
         bit_offset = channel * 12
         # Now calculate the byte that this position falls within and any offset
@@ -226,20 +239,22 @@ class TLC5947:
     # like when using the PWMOut mock class).
     def __len__(self):
         """Retrieve the total number of PWM channels available."""
-        return 24  # Always 24 channels on the chip.
+        return _CHANNELS * self._n  # number channels times number chips.
 
     def __getitem__(self, key):
-        """Retrieve the 12-bit PWM value for the specified channel (0-23).
+        """Retrieve the 12-bit PWM value for the specified channel (0-max).
+        max depends on the number of boards.
         """
-        assert 0 <= key <= 23
+        assert 0 <= key < _CHANNELS * self._n
         return self._get_gs_value(key)
 
     def __setitem__(self, key, val):
-        """Set the 12-bit PWM value (0-4095) for the specified channel (0-23).
+        """Set the 12-bit PWM value (0-4095) for the specified channel (0-max).
+        max depends on the number of boards.
         If auto_write is enabled (the default) then the chip PWM state will
         immediately be updated too, otherwise you must call write to update
         the chip with the new PWM state.
         """
-        assert 0 <= key <= 23
+        assert 0 <= key < _CHANNELS * self._n
         assert 0 <= val <= 4095
         self._set_gs_value(key, val)
