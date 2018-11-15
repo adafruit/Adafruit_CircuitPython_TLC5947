@@ -77,7 +77,7 @@ class TLC5947:
                         23, and for each driver add 24 to the port number printed.
                         The more drivers are chained, the more viable it is to set
                         auto_write=false, and call write explicitly after updating
-						all the channels.
+                        all the channels.
     """
 
     class PWMOut:

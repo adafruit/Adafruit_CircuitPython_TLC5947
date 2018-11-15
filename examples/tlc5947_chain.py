@@ -64,7 +64,7 @@ while True:
 #            tlc5947.write()        # see NOTE below
 
 # NOTE: if auto_write was disabled you need to call write on the parent to
-# make sure the value is written in each loop (this is not common, if disabling 
+# make sure the value is written in each loop (this is not common, if disabling
 # auto_write you probably want to use the direct 12-bit raw access instead,
 # shown next).
 
