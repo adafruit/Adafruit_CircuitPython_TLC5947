@@ -8,17 +8,14 @@ import digitalio
 
 import adafruit_tlc5947
 
-# Define pins connected to the TLC5947
-SCK = board.SCK
-MOSI = board.MOSI
-LATCH = digitalio.DigitalInOut(board.D5)
-
 # Initialize SPI bus.
-spi = busio.SPI(clock=SCK, MOSI=MOSI)
+spi = busio.SPI(clock=board.SCK, MOSI=board.MOSI)
 
 # Initialize TLC5947
 DRIVER_COUNT = 2		# change this to the number of drivers you have chained
+LATCH = digitalio.DigitalInOut(board.D5)
 tlc5947 = adafruit_tlc5947.TLC5947(spi, LATCH, num_drivers=DRIVER_COUNT)
+
 # You can optionally disable auto_write which allows you to control when
 # channel state is written to the chip.  Normally auto_write is true and
 # will automatically write out changes as soon as they happen to a channel, but
