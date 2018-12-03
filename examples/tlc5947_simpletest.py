@@ -57,12 +57,14 @@ while True:
 # Note if auto_write was disabled you need to call write on the parent to
 # make sure the value is written (this is not common, if disabling auto_write
 # you probably want to use the direct 12-bit raw access instead shown below).
-# tlc5947.write()
+#            tlc5947.write()
 
 # The other way to read and write channels is directly with each channel 12-bit
 # value and an item accessor syntax.  Index into the TLC5947 with the channel
 # number (0-23) and get or set its 12-bit value (0-4095).
 # For example set channel 1 to 50% duty cycle.
-# tlc5947[1] = 2048
+#tlc5947[1] = 2048
+# Or set channel 23 (first channel from the end) to 2/3 duty cycle.
+#tlc5947[-1] = 2730
 # Again be sure to call write if you disabled auto_write.
 #tlc5947.write()
