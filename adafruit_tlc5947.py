@@ -245,6 +245,8 @@ class TLC5947:
         """Retrieve the 12-bit PWM value for the specified channel (0-max).
         max depends on the number of boards.
         """
+        if key < 0:  # allow reverse adressing with negative index
+            key = key + _CHANNELS * self._n
         assert 0 <= key < _CHANNELS * self._n
         return self._get_gs_value(key)
 
@@ -255,6 +257,8 @@ class TLC5947:
         immediately be updated too, otherwise you must call write to update
         the chip with the new PWM state.
         """
+        if key < 0:  # allow reverse adressing with negative index
+            key = key + _CHANNELS * self._n
         assert 0 <= key < _CHANNELS * self._n
         assert 0 <= val <= 4095
         self._set_gs_value(key, val)
