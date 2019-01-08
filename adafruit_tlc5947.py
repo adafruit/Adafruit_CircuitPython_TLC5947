@@ -65,7 +65,7 @@ class TLC5947:
 
     :param auto_write: This is a boolean that defaults to True and will automatically
                        write out all the channel values to the chip as soon as a
-                       single one is updated.  If you set to false to disable then
+                       single one is updated.  If you set to False to disable then
                        you MUST call write after every channel update or when you
                        deem necessary to update the chip state.
 
@@ -76,7 +76,7 @@ class TLC5947:
                         on the driver directly connected to the controller are 0 to
                         23, and for each driver add 24 to the port number printed.
                         The more drivers are chained, the more viable it is to set
-                        auto_write=false, and call write explicitly after updating
+                        auto_write=False, and call write explicitly after updating
                         all the channels.
     """
 
@@ -104,7 +104,8 @@ class TLC5947:
 
         @duty_cycle.setter
         def duty_cycle(self, val):
-            assert 0 <= val <= 65535
+            if (0 > val) or (65535 < val):
+                raise ValueError("PWM intensity {0} outside supported range [0;65535]".format(val))
             # Convert to 12-bit value (quantization error will occur!).
             val = (val >> 4) & 0xFFF
             self._tlc5947._set_gs_value(self._channel, val)
@@ -128,6 +129,8 @@ class TLC5947:
 
 
     def __init__(self, spi, latch, *, auto_write=True, num_drivers=1):
+        if (1 > num_drivers):
+            raise ValueError("need at least one driver; {0} is not supported.".format(num_drivers))
         self._spi = spi
         self._latch = latch
         self._latch.switch_to_output(value=False)
@@ -165,7 +168,8 @@ class TLC5947:
     def _get_gs_value(self, channel):
         # pylint: disable=no-else-return
         # Disable should be removed when refactor can be tested
-        assert 0 <= channel < _CHANNELS * self._n
+        if (0 > channel) or (_CHANNELS * self._n <= channel):
+            raise ValueError("channel {0} not available with {1} board(s).".format(channel, self._n))
         # Invert channel position as the last channel needs to be written first.
         # I.e. is in the first position of the shift registr.
         channel = _CHANNELS * self._n - 1 - channel
@@ -190,8 +194,11 @@ class TLC5947:
             raise RuntimeError('Unsupported bit offset!')
 
     def _set_gs_value(self, channel, val):
-        assert 0 <= channel < _CHANNELS * self._n
-        assert 0 <= val <= 4095
+        if (0 > channel) or (_CHANNELS * self._n <= channel):
+            raise ValueError("channel {0} not available with {1} board(s).".format(channel, self._n))
+        if (0 > val) or (4095 < val):
+            raise ValueError("PWM intensity {0} outside supported range [0;4095]".format(val))
+
         # Invert channel position as the last channel needs to be written first.
         # I.e. is in the first position of the shift registr.
         channel = _CHANNELS * self._n - 1 - channel
@@ -247,8 +254,7 @@ class TLC5947:
         """
         if key < 0:  # allow reverse adressing with negative index
             key = key + _CHANNELS * self._n
-        assert 0 <= key < _CHANNELS * self._n
-        return self._get_gs_value(key)
+        return self._get_gs_value(key)    # does parameter checking
 
     def __setitem__(self, key, val):
         """Set the 12-bit PWM value (0-4095) for the specified channel (0-max).
@@ -259,6 +265,4 @@ class TLC5947:
         """
         if key < 0:  # allow reverse adressing with negative index
             key = key + _CHANNELS * self._n
-        assert 0 <= key < _CHANNELS * self._n
-        assert 0 <= val <= 4095
-        self._set_gs_value(key, val)
+        self._set_gs_value(key, val)    # does parameter checking
