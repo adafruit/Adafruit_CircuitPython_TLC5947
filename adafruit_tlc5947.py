@@ -170,7 +170,7 @@ class TLC5947:
         # Disable should be removed when refactor can be tested
         if (channel < 0) or (channel >= _CHANNELS * self._n):
             raise ValueError(
-                    "channel {0} not available with {1} board(s).".format(channel, self._n))
+                "channel {0} not available with {1} board(s).".format(channel, self._n))
         # Invert channel position as the last channel needs to be written first.
         # I.e. is in the first position of the shift registr.
         channel = _CHANNELS * self._n - 1 - channel
@@ -197,7 +197,7 @@ class TLC5947:
     def _set_gs_value(self, channel, val):
         if (channel < 0) or (channel >= _CHANNELS * self._n):
             raise ValueError(
-                    "channel {0} not available with {1} board(s).".format(channel, self._n))
+                "channel {0} not available with {1} board(s).".format(channel, self._n))
         if (val < 0) or (val > 4095):
             raise ValueError("PWM intensity {0} outside supported range [0;4095]".format(val))
 
