@@ -104,7 +104,7 @@ class TLC5947:
 
         @duty_cycle.setter
         def duty_cycle(self, val):
-            if (val < 0) or (val > 65535):
+            if val < 0 or val > 65535:
                 raise ValueError("PWM intensity {0} outside supported range [0;65535]".format(val))
             # Convert to 12-bit value (quantization error will occur!).
             val = (val >> 4) & 0xFFF
@@ -130,7 +130,7 @@ class TLC5947:
 
     def __init__(self, spi, latch, *, auto_write=True, num_drivers=1):
         if num_drivers < 1:
-            raise ValueError("need at least one driver; {0} is not supported.".format(num_drivers))
+            raise ValueError("Need at least one driver; {0} is not supported.".format(num_drivers))
         self._spi = spi
         self._latch = latch
         self._latch.switch_to_output(value=False)
@@ -168,9 +168,9 @@ class TLC5947:
     def _get_gs_value(self, channel):
         # pylint: disable=no-else-return
         # Disable should be removed when refactor can be tested
-        if (channel < 0) or (channel >= _CHANNELS * self._n):
+        if channel < 0 or channel >= _CHANNELS * self._n:
             raise ValueError(
-                "channel {0} not available with {1} board(s).".format(channel, self._n))
+                "Channel {0} not available with {1} board(s).".format(channel, self._n))
         # Invert channel position as the last channel needs to be written first.
         # I.e. is in the first position of the shift registr.
         channel = _CHANNELS * self._n - 1 - channel
@@ -195,10 +195,10 @@ class TLC5947:
             raise RuntimeError('Unsupported bit offset!')
 
     def _set_gs_value(self, channel, val):
-        if (channel < 0) or (channel >= _CHANNELS * self._n):
+        if channel < 0 or channel >= _CHANNELS * self._n:
             raise ValueError(
-                "channel {0} not available with {1} board(s).".format(channel, self._n))
-        if (val < 0) or (val > 4095):
+                "Channel {0} not available with {1} board(s).".format(channel, self._n))
+        if val < 0 or val > 4095:
             raise ValueError("PWM intensity {0} outside supported range [0;4095]".format(val))
 
         # Invert channel position as the last channel needs to be written first.
