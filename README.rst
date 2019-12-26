@@ -10,8 +10,8 @@ Introduction
     :target: https://discord.gg/nBQh6qu
     :alt: Discord
 
-.. image:: https://travis-ci.com/adafruit/Adafruit_CircuitPython_TLC5947.svg?branch=master
-    :target: https://travis-ci.com/adafruit/Adafruit_CircuitPython_TLC5947
+.. image:: https://github.com/adafruit/Adafruit_CircuitPython_TLC5947/workflows/Build%20CI/badge.svg
+    :target: https://github.com/adafruit/Adafruit_CircuitPython_TLC5947/actions/
     :alt: Build Status
 
 CircuitPython module for the TLC5947 12-bit 24 channel LED PWM driver.
