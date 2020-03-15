@@ -12,7 +12,7 @@ import adafruit_tlc5947
 spi = busio.SPI(clock=board.SCK, MOSI=board.MOSI)
 
 # Initialize TLC5947
-DRIVER_COUNT = 2		# change this to the number of drivers you have chained
+DRIVER_COUNT = 2  # change this to the number of drivers you have chained
 LATCH = digitalio.DigitalInOut(board.D5)
 tlc5947 = adafruit_tlc5947.TLC5947(spi, LATCH, num_drivers=DRIVER_COUNT)
 
@@ -21,13 +21,14 @@ tlc5947 = adafruit_tlc5947.TLC5947(spi, LATCH, num_drivers=DRIVER_COUNT)
 # will automatically write out changes as soon as they happen to a channel, but
 # if you need more control or atomic updates of multiple channels then disable
 # and manually call write as shown below.
-#tlc5947 = adafruit_tlc5947.TLC5947(spi, LATCH, num_drivers=DRIVER_COUNT, auto_write=False)
+# tlc5947 = adafruit_tlc5947.TLC5947(spi, LATCH, num_drivers=DRIVER_COUNT, auto_write=False)
 
 # There are two ways to set channel PWM values. The first is by getting
 # a PWMOut object that acts like the built-in PWMOut and can be used anywhere
 # it is used in your code.  Change the duty_cycle property to a 16-bit value
 # (note this is NOT the 12-bit value supported by the chip natively) and the
 # PWM channel will be updated.
+
 
 def first_last():
     """Cycles the red pin of LED one up, then the other LED; now dims the LEDs
@@ -39,13 +40,13 @@ def first_last():
     redA = tlc5947.create_pwm_out(0)
     greenA = tlc5947.create_pwm_out(1)
     blueA = tlc5947.create_pwm_out(2)
-    redZ = tlc5947.create_pwm_out(DRIVER_COUNT*24-3)
-    greenZ = tlc5947.create_pwm_out(DRIVER_COUNT*24-2)
-    blueZ = tlc5947.create_pwm_out(DRIVER_COUNT*24-1)
+    redZ = tlc5947.create_pwm_out(DRIVER_COUNT * 24 - 3)
+    greenZ = tlc5947.create_pwm_out(DRIVER_COUNT * 24 - 2)
+    blueZ = tlc5947.create_pwm_out(DRIVER_COUNT * 24 - 1)
 
     step = 10
     start_pwm = 0
-    end_pwm = 32767 # 50% (32767, or half of the maximum 65535):
+    end_pwm = 32767  # 50% (32767, or half of the maximum 65535):
 
     while True:
         for (pinA, pinZ) in ((redA, redZ), (greenA, greenZ), (blueA, blueZ)):
@@ -72,7 +73,8 @@ def first_last():
     # auto_write you probably want to use the direct 12-bit raw access instead,
     # shown next).
 
-#----------
+
+# ----------
 # The other way to read and write channels is directly with each channel 12-bit
 # value and an item accessor syntax.  Index into the TLC5947 with the channel
 # number (0-max) and get or set its 12-bit value (0-4095).
@@ -85,23 +87,24 @@ def test_all_channels(step):
     """
 
     start_pwm = 0
-    end_pwm = 3072 # 75% of the maximum 4095
+    end_pwm = 3072  # 75% of the maximum 4095
 
     while True:
-        for pin in range(DRIVER_COUNT*24):
+        for pin in range(DRIVER_COUNT * 24):
             # Brighten:
             for pwm in range(start_pwm, end_pwm, step):
                 tlc5947[pin] = pwm
                 # Again be sure to call write if you disabled auto_write.
-                #tlc5947.write()
+                # tlc5947.write()
 
             # Dim:
-            for pwm in range(end_pwm, start_pwm, 0 -step):
+            for pwm in range(end_pwm, start_pwm, 0 - step):
                 tlc5947[pin] = pwm
                 # Again be sure to call write if you disabled auto_write.
-                #tlc5947.write()
+                # tlc5947.write()
 
-#----------
+
+# ----------
 # Choose here which function to try:
-#first_last()
+# first_last()
 test_all_channels(16)

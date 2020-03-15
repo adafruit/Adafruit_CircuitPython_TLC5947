@@ -23,7 +23,7 @@ tlc5947 = adafruit_tlc5947.TLC5947(spi, LATCH)
 # will automatically write out changes as soon as they happen to a channel, but
 # if you need more control or atomic updates of multiple channels then disable
 # and manually call write as shown below.
-#tlc5947 = adafruit_tlc5947.TLC5947(spi, LATCH, auto_write=False)
+# tlc5947 = adafruit_tlc5947.TLC5947(spi, LATCH, auto_write=False)
 
 # There are two ways to channel channel PWM values.  The first is by getting
 # a PWMOut object that acts like the built-in PWMOut and can be used anywhere
@@ -40,7 +40,7 @@ blue = tlc5947.create_pwm_out(2)
 
 step = 10
 start_pwm = 0
-end_pwm = 32767 # 50% (32767, or half of the maximum 65535):
+end_pwm = 32767  # 50% (32767, or half of the maximum 65535):
 
 while True:
     for pin in (red, green, blue):
@@ -63,8 +63,8 @@ while True:
 # value and an item accessor syntax.  Index into the TLC5947 with the channel
 # number (0-23) and get or set its 12-bit value (0-4095).
 # For example set channel 1 to 50% duty cycle.
-#tlc5947[1] = 2048
+# tlc5947[1] = 2048
 # Or set channel 23 (first channel from the end) to 2/3 duty cycle.
-#tlc5947[-1] = 2730
+# tlc5947[-1] = 2730
 # Again be sure to call write if you disabled auto_write.
-#tlc5947.write()
+# tlc5947.write()

@@ -48,10 +48,11 @@ __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_TLC5947.git"
 # Globally disable protected access.  Ppylint can't figure out the
 # context for using internal decorate classes below.  In these cases protectected
 # access is by design for the internal class.
-#pylint: disable=protected-access
+# pylint: disable=protected-access
 
 _CHANNELS = 24
-_STOREBYTES = _CHANNELS + _CHANNELS//2
+_STOREBYTES = _CHANNELS + _CHANNELS // 2
+
 
 class TLC5947:
     """TLC5947 12-bit 24 channel LED PWM driver.  Create an instance of this by
@@ -105,7 +106,9 @@ class TLC5947:
         @duty_cycle.setter
         def duty_cycle(self, val):
             if val < 0 or val > 65535:
-                raise ValueError("PWM intensity {0} outside supported range [0;65535]".format(val))
+                raise ValueError(
+                    "PWM intensity {0} outside supported range [0;65535]".format(val)
+                )
             # Convert to 12-bit value (quantization error will occur!).
             val = (val >> 4) & 0xFFF
             self._tlc5947._set_gs_value(self._channel, val)
@@ -121,16 +124,18 @@ class TLC5947:
         # pylint bug misidentifies the following as a regular function instead
         # of the associated setter: https://github.com/PyCQA/pylint/issues/870
         # Must disable a few checks to make pylint happy (ugh).
-        #pylint: disable=no-self-use,unused-argument
+        # pylint: disable=no-self-use,unused-argument
         @frequency.setter
         def frequency(self, val):
-            raise RuntimeError('Cannot set TLC5947 PWM frequency!')
-        #pylint: enable=no-self-use,unused-argument
+            raise RuntimeError("Cannot set TLC5947 PWM frequency!")
 
+        # pylint: enable=no-self-use,unused-argument
 
     def __init__(self, spi, latch, *, auto_write=True, num_drivers=1):
         if num_drivers < 1:
-            raise ValueError("Need at least one driver; {0} is not supported.".format(num_drivers))
+            raise ValueError(
+                "Need at least one driver; {0} is not supported.".format(num_drivers)
+            )
         self._spi = spi
         self._latch = latch
         self._latch.switch_to_output(value=False)
@@ -157,7 +162,7 @@ class TLC5947:
             # First ensure latch is low.
             self._latch.value = False
             # Write out the bits.
-            self._spi.write(self._shift_reg, start=0, end=_STOREBYTES*self._n +1)
+            self._spi.write(self._shift_reg, start=0, end=_STOREBYTES * self._n + 1)
             # Then toggle latch high and low to set the value.
             self._latch.value = True
             self._latch.value = False
@@ -170,7 +175,8 @@ class TLC5947:
         # Disable should be removed when refactor can be tested
         if channel < 0 or channel >= _CHANNELS * self._n:
             raise ValueError(
-                "Channel {0} not available with {1} board(s).".format(channel, self._n))
+                "Channel {0} not available with {1} board(s).".format(channel, self._n)
+            )
         # Invert channel position as the last channel needs to be written first.
         # I.e. is in the first position of the shift registr.
         channel = _CHANNELS * self._n - 1 - channel
@@ -182,7 +188,7 @@ class TLC5947:
         start_offset = bit_offset % 8
         # Grab the high and low bytes.
         high_byte = self._shift_reg[byte_start]
-        low_byte = self._shift_reg[byte_start+1]
+        low_byte = self._shift_reg[byte_start + 1]
         if start_offset == 4:
             # Value starts in the lower 4 bits of the high bit so you can
             # just concat high with low byte and return the 12-bit value.
@@ -192,14 +198,17 @@ class TLC5947:
             # 4 bits of low byte.  Shift low byte and concat values.
             return ((high_byte << 4) | (low_byte >> 4)) & 0xFFF
         else:
-            raise RuntimeError('Unsupported bit offset!')
+            raise RuntimeError("Unsupported bit offset!")
 
     def _set_gs_value(self, channel, val):
         if channel < 0 or channel >= _CHANNELS * self._n:
             raise ValueError(
-                "Channel {0} not available with {1} board(s).".format(channel, self._n))
+                "Channel {0} not available with {1} board(s).".format(channel, self._n)
+            )
         if val < 0 or val > 4095:
-            raise ValueError("PWM intensity {0} outside supported range [0;4095]".format(val))
+            raise ValueError(
+                "PWM intensity {0} outside supported range [0;4095]".format(val)
+            )
 
         # Invert channel position as the last channel needs to be written first.
         # I.e. is in the first position of the shift registr.
@@ -212,11 +221,11 @@ class TLC5947:
         start_offset = bit_offset % 8
         # Grab the high and low bytes.
         high_byte = self._shift_reg[byte_start]
-        low_byte = self._shift_reg[byte_start+1]
+        low_byte = self._shift_reg[byte_start + 1]
         if start_offset == 4:
             # Value starts in the lower 4 bits of the high bit.
             high_byte &= 0b11110000
-            high_byte |= (val >> 8)
+            high_byte |= val >> 8
             low_byte = val & 0xFF
         elif start_offset == 0:
             # Value starts in the entire high byte and spills into upper
@@ -225,9 +234,9 @@ class TLC5947:
             low_byte &= 0b00001111
             low_byte |= (val << 4) & 0xFF
         else:
-            raise RuntimeError('Unsupported bit offset!')
+            raise RuntimeError("Unsupported bit offset!")
         self._shift_reg[byte_start] = high_byte
-        self._shift_reg[byte_start+1] = low_byte
+        self._shift_reg[byte_start + 1] = low_byte
         # Write the updated shift register values if required.
         if self.auto_write:
             self.write()
@@ -256,7 +265,7 @@ class TLC5947:
         """
         if key < 0:  # allow reverse adressing with negative index
             key = key + _CHANNELS * self._n
-        return self._get_gs_value(key)    # does parameter checking
+        return self._get_gs_value(key)  # does parameter checking
 
     def __setitem__(self, key, val):
         """Set the 12-bit PWM value (0-4095) for the specified channel (0-max).
@@ -267,4 +276,4 @@ class TLC5947:
         """
         if key < 0:  # allow reverse adressing with negative index
             key = key + _CHANNELS * self._n
-        self._set_gs_value(key, val)    # does parameter checking
+        self._set_gs_value(key, val)  # does parameter checking
