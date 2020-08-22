@@ -158,7 +158,9 @@ class TLC5947:
             # Lock the SPI bus and configure it for the shift register.
             while not self._spi.try_lock():
                 pass
-            self._spi.configure(baudrate=self._spi.frequency, polarity=0, phase=0, bits=8)
+            self._spi.configure(
+                baudrate=self._spi.frequency, polarity=0, phase=0, bits=8
+            )
             # First ensure latch is low.
             self._latch.value = False
             # Write out the bits.
