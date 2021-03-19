@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2018 Tony DiCola for Adafruit Industries
+# SPDX-License-Identifier: MIT
+
 # Simple demo of controlling the TLC5947 12-bit 24-channel PWM controller.
 # Will update channel values to different PWM duty cycles.
 # Author: Tony DiCola
