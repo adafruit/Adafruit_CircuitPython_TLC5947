@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2018 Tony DiCola for Adafruit Industries
+# SPDX-FileCopyrightText: 2018 Walter Haschka
+# SPDX-License-Identifier: MIT
+
 # Simple demo of controlling a chain of several TLC5947 12-bit 24-channel PWM controllers.
 # Will update channel values to different PWM duty cycles.
 # Authors: Tony DiCola, Walter Haschka
