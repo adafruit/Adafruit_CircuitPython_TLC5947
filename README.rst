@@ -57,6 +57,11 @@ Usage Example
 | See examples/tlc5947_simpletest.py for a demo of the usage.
 | See examples/tlc5947_chain.py for a demo of chained driver usage.
 
+Documentation
+=============
+
+API documentation for this library can be found on `Read the Docs <https://circuitpython.readthedocs.io/projects/tlc5947/en/latest/>`_.
+
 Contributing
 ============
 
