@@ -24,6 +24,13 @@ Implementation Notes
 * Adafruit CircuitPython firmware for the ESP8622 and M0-based boards:
   https://github.com/adafruit/circuitpython/releases
 """
+
+try:
+    from busio import SPI
+    from digitalio import DigitalInOut
+except ImportError:
+    pass
+
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_TLC5947.git"
 
@@ -115,8 +122,8 @@ class TLC5947:
 
     def __init__(
         self,
-        spi: "SPI",
-        latch: "DigitalInOut",
+        spi: SPI,
+        latch: DigitalInOut,
         *,
         auto_write: bool = True,
         num_drivers: int = 1
@@ -230,7 +237,7 @@ class TLC5947:
         if self.auto_write:
             self.write()
 
-    def create_pwm_out(self, channel: int) -> "PMWOut":
+    def create_pwm_out(self, channel: int) -> PWMOut:
         """Create an instance of a PWMOut-like class that mimics the built-in
         CircuitPython PWMOut class but is associated with the TLC5947 channel
         that is specified.  This PWMOut class has a duty_cycle property which
