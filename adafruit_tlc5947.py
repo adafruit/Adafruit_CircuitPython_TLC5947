@@ -24,6 +24,13 @@ Implementation Notes
 * Adafruit CircuitPython firmware for the ESP8622 and M0-based boards:
   https://github.com/adafruit/circuitpython/releases
 """
+
+try:
+    from busio import SPI
+    from digitalio import DigitalInOut
+except ImportError:
+    pass
+
 __version__ = "0.0.0+auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_TLC5947.git"
 
@@ -74,19 +81,19 @@ class TLC5947:
         as it is fixed by the TLC5947 to ~2.4-5.6 mhz.
         """
 
-        def __init__(self, tlc5947, channel):
+        def __init__(self, tlc5947: "TLC5947", channel: int) -> None:
             self._tlc5947 = tlc5947
             self._channel = channel
 
         @property
-        def duty_cycle(self):
+        def duty_cycle(self) -> int:
             """Get and set the 16-bit PWM duty cycle value for this channel."""
             raw_value = self._tlc5947._get_gs_value(self._channel)
             # Convert to 16-bit value from 12-bits and return it.
             return (raw_value << 4) & 0xFFFF
 
         @duty_cycle.setter
-        def duty_cycle(self, val):
+        def duty_cycle(self, val: int) -> None:
             if val < 0 or val > 65535:
                 raise ValueError(
                     "PWM intensity {0} outside supported range [0;65535]".format(val)
@@ -96,7 +103,7 @@ class TLC5947:
             self._tlc5947._set_gs_value(self._channel, val)
 
         @property
-        def frequency(self):
+        def frequency(self) -> int:
             """Frequency of the PWM channel, note you cannot change this and
             cannot read its exact value (it varies from 2.4-5.6 mhz, see the
             TLC5947 datasheet).
@@ -108,12 +115,19 @@ class TLC5947:
         # Must disable a few checks to make pylint happy (ugh).
         # pylint: disable=no-self-use,unused-argument
         @frequency.setter
-        def frequency(self, val):
+        def frequency(self, val: int) -> None:
             raise RuntimeError("Cannot set TLC5947 PWM frequency!")
 
         # pylint: enable=no-self-use,unused-argument
 
-    def __init__(self, spi, latch, *, auto_write=True, num_drivers=1):
+    def __init__(
+        self,
+        spi: SPI,
+        latch: DigitalInOut,
+        *,
+        auto_write: bool = True,
+        num_drivers: int = 1
+    ) -> None:
         if num_drivers < 1:
             raise ValueError(
                 "Need at least one driver; {0} is not supported.".format(num_drivers)
@@ -130,7 +144,7 @@ class TLC5947:
         # any channel value change).
         self.auto_write = auto_write
 
-    def write(self):
+    def write(self) -> None:
         """Write out the current channel PWM values to the chip.  This is only
         necessary to call if you disabled auto_write in the initializer,
         otherwise write is automatically called on any channel update.
@@ -152,7 +166,7 @@ class TLC5947:
             # Ensure the SPI bus is unlocked.
             self._spi.unlock()
 
-    def _get_gs_value(self, channel):
+    def _get_gs_value(self, channel: int) -> int:
         # pylint: disable=no-else-return
         # Disable should be removed when refactor can be tested
         if channel < 0 or channel >= _CHANNELS * self._n:
@@ -182,7 +196,7 @@ class TLC5947:
         else:
             raise RuntimeError("Unsupported bit offset!")
 
-    def _set_gs_value(self, channel, val):
+    def _set_gs_value(self, channel: int, val: int) -> None:
         if channel < 0 or channel >= _CHANNELS * self._n:
             raise ValueError(
                 "Channel {0} not available with {1} board(s).".format(channel, self._n)
@@ -223,7 +237,7 @@ class TLC5947:
         if self.auto_write:
             self.write()
 
-    def create_pwm_out(self, channel):
+    def create_pwm_out(self, channel: int) -> PWMOut:
         """Create an instance of a PWMOut-like class that mimics the built-in
         CircuitPython PWMOut class but is associated with the TLC5947 channel
         that is specified.  This PWMOut class has a duty_cycle property which
@@ -237,11 +251,11 @@ class TLC5947:
     # Define index and length properties to set and get each channel's raw
     # 12-bit value (useful for changing channels without quantization error
     # like when using the PWMOut mock class).
-    def __len__(self):
+    def __len__(self) -> int:
         """Retrieve the total number of PWM channels available."""
         return _CHANNELS * self._n  # number channels times number chips.
 
-    def __getitem__(self, key):
+    def __getitem__(self, key: int) -> int:
         """Retrieve the 12-bit PWM value for the specified channel (0-max).
         max depends on the number of boards.
         """
@@ -249,7 +263,7 @@ class TLC5947:
             key = key + _CHANNELS * self._n
         return self._get_gs_value(key)  # does parameter checking
 
-    def __setitem__(self, key, val):
+    def __setitem__(self, key: int, val: int) -> None:
         """Set the 12-bit PWM value (0-4095) for the specified channel (0-max).
         max depends on the number of boards.
         If auto_write is enabled (the default) then the chip PWM state will
