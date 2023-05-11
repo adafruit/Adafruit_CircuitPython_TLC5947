@@ -53,7 +53,7 @@ def first_last():
     end_pwm = 32767  # 50% (32767, or half of the maximum 65535):
 
     while True:
-        for (pinA, pinZ) in ((redA, redZ), (greenA, greenZ), (blueA, blueZ)):
+        for pinA, pinZ in ((redA, redZ), (greenA, greenZ), (blueA, blueZ)):
             # Brighten:
             print("LED A up")
             for pwm in range(start_pwm, end_pwm, step):
