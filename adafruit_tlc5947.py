@@ -27,7 +27,7 @@ Implementation Notes
 
 try:
     from busio import SPI
-    from digitalio import DigitalInOut
+    import gpiod
 except ImportError:
     pass
 
@@ -123,7 +123,7 @@ class TLC5947:
     def __init__(
         self,
         spi: SPI,
-        latch: DigitalInOut,
+        latch: Line,
         *,
         auto_write: bool = True,
         num_drivers: int = 1
@@ -134,7 +134,8 @@ class TLC5947:
             )
         self._spi = spi
         self._latch = latch
-        self._latch.switch_to_output(value=False)
+        
+        self._latch.set_value(0)
         # This device is just a big 36*n byte long shift register.  There's no
         # fancy protocol or other commands to send, just write out all 288*n
         # bits every time the state is updated.
@@ -156,12 +157,12 @@ class TLC5947:
                 pass
 
             # First ensure latch is low.
-            self._latch.value = False
+            self._latch.set_value(0)
             # Write out the bits.
             self._spi.write(self._shift_reg, start=0, end=_STOREBYTES * self._n + 1)
             # Then toggle latch high and low to set the value.
-            self._latch.value = True
-            self._latch.value = False
+            self._latch.set_value(1)
+            self._latch.set_value(0)
         finally:
             # Ensure the SPI bus is unlocked.
             self._spi.unlock()
