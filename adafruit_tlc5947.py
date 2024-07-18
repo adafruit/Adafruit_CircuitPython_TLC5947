@@ -27,7 +27,7 @@ Implementation Notes
 
 try:
     from busio import SPI
-    import gpiod
+    from gpiod import Line
 except ImportError:
     pass
 
