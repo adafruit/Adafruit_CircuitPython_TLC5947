@@ -138,7 +138,7 @@ class TLC5947:
         self._latch = latch
         self._latch_request = latch_request
         
-        self._latch_request.set_value(self.latch, value= Value.INACTIVE)
+        self._latch_request.set_value(self._latch, value= Value.INACTIVE)
         
         # This device is just a big 36*n byte long shift register.  There's no
         # fancy protocol or other commands to send, just write out all 288*n
@@ -161,12 +161,12 @@ class TLC5947:
                 pass
 
             # First ensure latch is low.
-            self._latch_request.set_value(self.latch, value= Value.INACTIVE)
+            self._latch_request.set_value(self._latch, value= Value.INACTIVE)
             # Write out the bits.
             self._spi.write(self._shift_reg, start=0, end=_STOREBYTES * self._n + 1)
             # Then toggle latch high and low to set the value.
-            self._latch_request.set_value(self.latch, value= Value.ACTIVE)
-            self._latch_request.set_value(self.latch, value= Value.INACTIVE)
+            self._latch_request.set_value(self._latch, value= Value.ACTIVE)
+            self._latch_request.set_value(self._latch, value= Value.INACTIVE)
         finally:
             # Ensure the SPI bus is unlocked.
             self._spi.unlock()
