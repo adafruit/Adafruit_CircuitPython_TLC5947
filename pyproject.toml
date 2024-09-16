@@ -17,7 +17,7 @@ readme = "README.rst"
 authors = [
     {name = "Adafruit Industries", email = "circuitpython@adafruit.com"}
 ]
-urls = {Homepage = "https://github.com/adafruit/Adafruit_CircuitPython_TLC5947"}
+urls = {Homepage = "https://github.com/sphere-drones/Adafruit_CircuitPython_TLC5947"}
 keywords = [
     "adafruit",
     "tlc5947",
