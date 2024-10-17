@@ -10,7 +10,7 @@ requires = [
 ]
 
 [project]
-name = "adafruit-circuitpython-tlc5947"
+name = "adafruit_tlc5947"
 description = "CircuitPython library for TLC5947 12-bit 24 channel LED PWM driver."
 version = "0.0.0+auto.0"
 readme = "README.rst"
