@@ -38,11 +38,10 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
 ]
-dynamic = ["dependencies", "optional-dependencies"]
-
+dependencies = [
+    "Adafruit-Blinka==8.49.0 "
+   ]
+   
 [tool.setuptools]
 py-modules = ["adafruit_tlc5947"]
 
-[tool.setuptools.dynamic]
-dependencies = {file = ["requirements.txt"]}
-optional-dependencies = {optional = {file = ["optional_requirements.txt"]}}
