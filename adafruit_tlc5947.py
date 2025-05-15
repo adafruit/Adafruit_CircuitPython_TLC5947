@@ -38,7 +38,6 @@ __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_TLC5947.git"
 # Globally disable protected access.  Ppylint can't figure out the
 # context for using internal decorate classes below.  In these cases protectected
 # access is by design for the internal class.
-# pylint: disable=protected-access
 
 _CHANNELS = 24
 _STOREBYTES = _CHANNELS + _CHANNELS // 2
@@ -95,9 +94,7 @@ class TLC5947:
         @duty_cycle.setter
         def duty_cycle(self, val: int) -> None:
             if val < 0 or val > 65535:
-                raise ValueError(
-                    "PWM intensity {0} outside supported range [0;65535]".format(val)
-                )
+                raise ValueError(f"PWM intensity {val} outside supported range [0;65535]")
             # Convert to 12-bit value (quantization error will occur!).
             val = (val >> 4) & 0xFFF
             self._tlc5947._set_gs_value(self._channel, val)
@@ -113,25 +110,15 @@ class TLC5947:
         # pylint bug misidentifies the following as a regular function instead
         # of the associated setter: https://github.com/PyCQA/pylint/issues/870
         # Must disable a few checks to make pylint happy (ugh).
-        # pylint: disable=no-self-use,unused-argument
         @frequency.setter
         def frequency(self, val: int) -> None:
             raise RuntimeError("Cannot set TLC5947 PWM frequency!")
 
-        # pylint: enable=no-self-use,unused-argument
-
     def __init__(
-        self,
-        spi: SPI,
-        latch: DigitalInOut,
-        *,
-        auto_write: bool = True,
-        num_drivers: int = 1
+        self, spi: SPI, latch: DigitalInOut, *, auto_write: bool = True, num_drivers: int = 1
     ) -> None:
         if num_drivers < 1:
-            raise ValueError(
-                "Need at least one driver; {0} is not supported.".format(num_drivers)
-            )
+            raise ValueError(f"Need at least one driver; {num_drivers} is not supported.")
         self._spi = spi
         self._latch = latch
         self._latch.switch_to_output(value=False)
@@ -167,12 +154,9 @@ class TLC5947:
             self._spi.unlock()
 
     def _get_gs_value(self, channel: int) -> int:
-        # pylint: disable=no-else-return
         # Disable should be removed when refactor can be tested
         if channel < 0 or channel >= _CHANNELS * self._n:
-            raise ValueError(
-                "Channel {0} not available with {1} board(s).".format(channel, self._n)
-            )
+            raise ValueError(f"Channel {channel} not available with {self._n} board(s).")
         # Invert channel position as the last channel needs to be written first.
         # I.e. is in the first position of the shift registr.
         channel = _CHANNELS * self._n - 1 - channel
@@ -198,13 +182,9 @@ class TLC5947:
 
     def _set_gs_value(self, channel: int, val: int) -> None:
         if channel < 0 or channel >= _CHANNELS * self._n:
-            raise ValueError(
-                "Channel {0} not available with {1} board(s).".format(channel, self._n)
-            )
+            raise ValueError(f"Channel {channel} not available with {self._n} board(s).")
         if val < 0 or val > 4095:
-            raise ValueError(
-                "PWM intensity {0} outside supported range [0;4095]".format(val)
-            )
+            raise ValueError(f"PWM intensity {val} outside supported range [0;4095]")
 
         # Invert channel position as the last channel needs to be written first.
         # I.e. is in the first position of the shift registr.
