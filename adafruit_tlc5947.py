@@ -240,7 +240,7 @@ class TLC5947:
         max depends on the number of boards.
         """
         if key < 0:  # allow reverse adressing with negative index
-            key = key + _CHANNELS * self._n
+            key += _CHANNELS * self._n
         return self._get_gs_value(key)  # does parameter checking
 
     def __setitem__(self, key: int, val: int) -> None:
@@ -251,5 +251,5 @@ class TLC5947:
         the chip with the new PWM state.
         """
         if key < 0:  # allow reverse adressing with negative index
-            key = key + _CHANNELS * self._n
+            key += _CHANNELS * self._n
         self._set_gs_value(key, val)  # does parameter checking
